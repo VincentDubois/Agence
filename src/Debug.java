@@ -1,3 +1,5 @@
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -21,18 +23,18 @@ public class Debug {
 	public static Agence.Jeu jeu;
 
 	public static void create() {
-		JFrame mainFrame = new JFrame("Arbres");		
-//		Container contentPane = mainFrame.getContentPane();
+		JFrame mainFrame = new JFrame("Debug");		
+		Container contentPane = mainFrame.getContentPane();
 		
 //		contentPane.setLayout(new FlowLayout());
-		Box vbox = Box.createVerticalBox();
+//		Box vbox = Box.createVerticalBox();
 				
-		final Canvas canvas = new Canvas(800, 300);
+		final Canvas canvas = new Canvas(1024, 768);
+		canvas.setScale(0.4);
 		exp = new Explorer(canvas);
 	
 		JScrollPane scrollPane = new JScrollPane(   canvas);
-
-				scrollPane.setSize(800, 600);
+		scrollPane.setSize(1024, 800);
 		
 		Box hbox = Box.createHorizontalBox();
 		JButton button = new JButton("Zoom +");
@@ -66,7 +68,7 @@ public class Debug {
 		
 		hbox.add(Box.createGlue());
 		
-		hbox.add(new JLabel("S�lection "));
+		hbox.add(new JLabel("Sélection "));
 		
 
 		nameList = new ListListener(exp);
@@ -74,19 +76,21 @@ public class Debug {
 		canvas.addSelectionListener(nameList);
 		hbox.add(nameList);
 
-		vbox.add(hbox);
+		//vbox.add(hbox);
+		contentPane.add(hbox,BorderLayout.PAGE_START);
 
 /*		scrollPane.setBackground(Color.lightGray);
 		canvas.setBackground(Color.lightGray);
 		*/
 
-		scrollPane.setBorder(BorderFactory.createTitledBorder("M�moire"));
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Mémoire"));
 		scrollPane.setOpaque(false);
 		scrollPane.getViewport().setOpaque(false);
 
-		vbox.add(scrollPane);
+//		vbox.add(scrollPane);
+		contentPane.add(scrollPane,BorderLayout.CENTER);
 		
-		mainFrame.add(vbox);
+//		mainFrame.add(vbox);
 
 		
 
