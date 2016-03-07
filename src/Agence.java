@@ -13,9 +13,14 @@ public class Agence {
 	}
 
 	public static class Contrat {
+		int duree;
+		int deadline;
+		int paye;
 	}
 
 	public static class Dossier{
+		int travail;
+		Contrat contrat;
 	}
 
 
@@ -39,11 +44,25 @@ public class Agence {
 		}
 	}
 
-	private static Jeu CréerJeu() {
-		// A compléter
-		return new Jeu();
+	private static Jeu creerJeu() {
+		Jeu jeu = new Jeu();
+		jeu.tresorerie =  1000;
+		jeu.contrat =  new Contrat[6];
+		for(int i = 0; i< jeu.contrat.length;++i){
+			jeu.contrat[i] = createContrat();
+		}
+		jeu.dossier = new Dossier[3];		
+		return jeu;
 	}
 
+
+	private static Contrat createContrat() {		
+		Contrat contrat = new Contrat();
+		contrat.duree = getRandom(5,25);
+		contrat.deadline = contrat.duree + getRandom(5,20);
+		contrat.paye = contrat.duree*getRandom(80,150);
+		return contrat ;
+	}
 
 	private static void update(Jeu jeu) {
 		// TODO Auto-generated method stub
@@ -57,9 +76,17 @@ public class Agence {
 	}
 
 
-	private static int createDossier(Jeu jeu, int i) {
-		// TODO Auto-generated method stub
-		return 0;
+	private static int createDossier(Jeu jeu, int n) {
+		for(int i=0; i< jeu.dossier.length; ++i){
+			if (jeu.dossier[i] == null){
+				Dossier dossier = new Dossier();
+				dossier.contrat = jeu.contrat[n];
+				dossier.travail = 0;
+				jeu.dossier[i] = dossier;
+				return i;
+			}
+		}
+		return -1;
 	}
 
 
@@ -81,7 +108,8 @@ public class Agence {
 	public static void main(String[] args) {
 
 
-		Jeu jeu = CréerJeu();
+		Jeu jeu = creerJeu();
+		createDossier(jeu,0);
 
 		Debug.create();
 		Debug.target(jeu);
