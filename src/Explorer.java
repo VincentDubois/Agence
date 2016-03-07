@@ -219,14 +219,16 @@ public class Explorer {
 		if (o == null || (o.getClass() == String.class) ) return;
 		if (!map.keySet().contains(o)){
 			Enregistrement e = new Enregistrement(x,y);
+		
 			e.arrowMovedAction = new MovedAction();
+
 
 			map.put(o, e);
 			canvas.add(e);
 			for(  Link entry : getLink(o)){
 				if (entry.isLink()){
 					createInitialView(entry.to,x+200,y);
-					y = y+60;
+					y = y+100;
 				}
 			}			
 		}

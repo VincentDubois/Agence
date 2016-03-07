@@ -106,7 +106,7 @@ public class Debug {
 		Debug.jeu = jeu;
 		exp.read(jeu,"jeu");
 		exp.refresh();
-		nameList.update();		
+		nameList.update();			
 	}
 
 	public static void update() {
