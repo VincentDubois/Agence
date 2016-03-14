@@ -71,6 +71,7 @@ public class Explorer {
 	}
 
 	Map<Object,Enregistrement> map; 
+	Map<String,Variable> variable;
 	Map<String,Map<Enregistrement,String> > name;
 	Canvas canvas;
 	public int y;
@@ -78,6 +79,7 @@ public class Explorer {
 	public Explorer(Canvas canvas){
 		this.canvas = canvas;
 		map = new WeakHashMap<Object, Enregistrement>();
+		variable = new HashMap<String,Variable>();
 		name = new HashMap<String,Map<Enregistrement,String> >();
 		y = 20;
 	}
@@ -244,15 +246,22 @@ public class Explorer {
 		if (o != null){
 			r = map.get(o);
 		}
+		
+		Variable v = variable.get(label);
+		
+		if (v == null){
+			v = new Variable(label,o);
+			variable.put(label, v);
+		}		
 
-		Enregistrement e = map.get(label);
+		Enregistrement e = map.get(v);
 		if (e == null){
 			e = new Enregistrement(20,y);
 			e.arrowMovedAction = new MovedAction();
 			e.addFieldRecord(label, r);
 			canvas.add(e);
 			y = y +e.getBoundingBox().height+20;
-			map.put(new Variable(label,o),e);
+			map.put(v,e);
 		} else {
 			e.clear();
 			e.addFieldRecord(label, r);
