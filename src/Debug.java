@@ -31,7 +31,7 @@ public class Debug {
 		//		Box vbox = Box.createVerticalBox();
 
 		final Canvas canvas = new Canvas(1024, 768);
-		canvas.setScale(0.4);
+		//canvas.setScale(0.4);
 		exp = new Explorer(canvas);
 
 		JScrollPane scrollPane = new JScrollPane(   canvas);
