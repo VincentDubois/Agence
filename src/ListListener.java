@@ -10,6 +10,7 @@ import canvas.Listener;
 
 import java.awt.Dimension;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 public class ListListener extends JList implements Listener {
@@ -43,9 +44,10 @@ public class ListListener extends JList implements Listener {
 
 	void update() {
 		data.clear();
-		for( Map<Enregistrement, String> it : e.name.values()){
-			String s =it.get(this.grob);
-			if (s != null){
+		for( Map<Enregistrement, Set<String> > it : e.name.values()){
+			Set<String> set = it.get(this.grob);
+			if (set != null){
+				for(String s :set)
 				data.addElement(s);
 			}
 		}

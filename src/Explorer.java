@@ -29,14 +29,16 @@ public class Explorer {
 		if (newDest != null){
 			des = "( ";
 			boolean first = true;
-			for( Map<Enregistrement, String> it : name.values()){
-				String s =it.get(newDest);
-				if (s!= null){
-					if (!first){
-						des = des+" , ";
+			for( Map<Enregistrement, Set<String> > it : name.values()){
+				Set<String> set =it.get(newDest);
+				if (set != null){
+					for(String s : set){
+						if (!first){
+							des = des+" , ";
+						}
+						first  = false;
+						des = des +s;
 					}
-					first  = false;
-					des = des +s;
 				}
 			}
 			des = des+" )";
@@ -50,12 +52,10 @@ public class Explorer {
 	public String getSourceName(Arrow arrow){
 		Enregistrement.Field field =((ArrowValue.Center)  arrow.from).getField(); 
 		String result = getName(field.getEnregistrement());
-		if (!result.equals("null") ){
-			result += ".";
-		} else {
+		if (result.equals("null") ){
 			result = "";
 		}
-		result += ((TextBox) field.label).text;
+		assembleName(result,((TextBox) field.label).text);
 		return result;
 	}
 
@@ -72,7 +72,7 @@ public class Explorer {
 
 	Map<Object,Enregistrement> map; 
 	Map<String,Variable> variable;
-	Map<String,Map<Enregistrement,String> > name;
+	Map<String,Map<Enregistrement,Set<String> > > name;
 	Canvas canvas;
 	public int y;
 
@@ -80,7 +80,7 @@ public class Explorer {
 		this.canvas = canvas;
 		map = new WeakHashMap<Object, Enregistrement>();
 		variable = new HashMap<String,Variable>();
-		name = new HashMap<String,Map<Enregistrement,String> >();
+		name = new HashMap<String,Map<Enregistrement,Set<String> > >();
 		y = 20;
 	}
 	
@@ -274,11 +274,28 @@ public class Explorer {
 
 
 	}
+	
+	private static boolean subsume(Set<String> s, String n){
+		if (s == null) return false;
+		for(String e : s){
+			if (e.startsWith(n)) return true;
+		}
+		return false;
+	}
+	
+	private static void addName(Map<Enregistrement, Set<String> > nameMap, Enregistrement e, String name){
+		Set<String> set = nameMap.get(e);
+		if (set == null){
+			set = new HashSet<String>();
+			nameMap.put(e, set);
+		}
+		set.add(name);
+	}
 
 	private void makeNames(String label,Object o) {
-		Map<Enregistrement, String> nameMap =name.get(o);
+		Map<Enregistrement, Set<String> > nameMap =name.get(o);
 		if (nameMap == null){
-			nameMap = new HashMap<Enregistrement,String>();
+			nameMap = new HashMap<Enregistrement,Set<String> >();
 			name.put(label, nameMap);
 		} else {
 			nameMap.clear();
@@ -289,15 +306,20 @@ public class Explorer {
 
 		while (!toDo.isEmpty()){
 			for( Entry<Object,String> e : toDo.entrySet()){
-				nameMap.put(map.get(e.getKey()), e.getValue());
+				addName(nameMap,map.get(e.getKey()), e.getValue());
 
 				for(  Link entry : getLink(e.getKey())){
 
 					Object newObject;
 					newObject = entry.to;
-					if (entry.isLink() &&   newObject !=null  && map.containsKey(newObject) && 
-							!nameMap.containsKey(map.get(newObject))){
-						next.put(newObject,e.getValue()+"."+entry.name);
+					if (entry.isLink() &&   newObject !=null  
+							&& map.containsKey(newObject)){
+						Enregistrement enregistrement = map.get(newObject);
+						String newName = assembleName(e.getValue(),entry.name);
+						
+						if ( !subsume(nameMap.get(enregistrement),newName)){
+								next.put(newObject,newName);
+						}
 					}
 
 				}
@@ -305,5 +327,10 @@ public class Explorer {
 			toDo = next;
 			next = new HashMap<Object, String>();
 		}
+	}
+
+	private static String assembleName(String name, String field) {
+		if (field.startsWith("[")) return name+field;
+		return name+"."+field;
 	}
 }
